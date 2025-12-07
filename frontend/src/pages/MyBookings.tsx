@@ -27,28 +27,28 @@ const MyBookings = () => {
   const loadBookings = async () => {
     try {
       const data = await getMyBookings();
-      
+
       // Ensure images is always an array for each booking's room
       const processedBookings = data.map((booking: any) => ({
         ...booking,
         room: {
           ...booking.room,
-          images: Array.isArray(booking.room.images) 
-            ? booking.room.images 
-            : typeof booking.room.images === 'string' 
+          images: Array.isArray(booking.room.images)
+            ? booking.room.images
+            : typeof booking.room.images === 'string'
               ? booking.room.images.split(',').map((img: string) => img.trim()).filter((img: string) => img)
               : []
         }
       }));
-      
+
       setBookings(processedBookings);
-      
+
       // Load feedbacks for each room
       const feedbackPromises = processedBookings.map(async (booking: any) => {
         const roomFeedbacks = await getRoomFeedback(booking.room.id);
         return { roomId: booking.room.id, feedbacks: roomFeedbacks };
       });
-      
+
       const feedbackResults = await Promise.all(feedbackPromises);
       const feedbackMap: { [key: number]: any[] } = {};
       feedbackResults.forEach(result => {
@@ -68,7 +68,7 @@ const MyBookings = () => {
     const endDate = new Date(booking.end_time);
     const diffTime = endDate.getTime() - startDate.getTime();
     const diffHours = diffTime / (1000 * 60 * 60);
-    
+
     return {
       hours: diffHours,
       halfDays: Math.ceil(diffHours / 12)
@@ -77,18 +77,18 @@ const MyBookings = () => {
 
   const getDurationText = (booking: any) => {
     const duration = calculateDuration(booking);
-    
+
     if (duration.hours <= 12) return `${Math.round(duration.hours)} hours`;
     if (duration.hours <= 24) return '1 day';
-    
+
     const days = Math.floor(duration.hours / 24);
     const remainingHours = duration.hours % 24;
-    
+
     let text = `${days} day${days > 1 ? 's' : ''}`;
     if (remainingHours >= 6) {
       text += remainingHours <= 12 ? ' + half day' : ' + 1 day';
     }
-    
+
     return text;
   };
 
@@ -97,28 +97,28 @@ const MyBookings = () => {
     if (booking.total_cost) {
       return Number(booking.total_cost);
     }
-    
+
     // Fallback calculation matching backend logic
     const duration = calculateDuration(booking);
     const durationHours = Math.ceil(duration.hours);
     const dailyRate = booking.room.cost;
     const hourlyRate = dailyRate / 24;
-    
+
     // Minimum 6 hours
     if (durationHours <= 6) {
       return Math.ceil(6 * hourlyRate);
     }
-    
+
     // 6-12 hours: hourly rate
     if (durationHours <= 12) {
       return Math.ceil(durationHours * hourlyRate);
     }
-    
+
     // 12-24 hours: full day rate
     if (durationHours <= 24) {
       return dailyRate;
     }
-    
+
     // >24 hours: multiple days
     const days = Math.ceil(durationHours / 24);
     return days * dailyRate;
@@ -140,7 +140,7 @@ const MyBookings = () => {
       setToast({ message: 'Please select a rating', type: 'error' });
       return;
     }
-    
+
     if (!feedbackData.comment.trim()) {
       setToast({ message: 'Please write a comment', type: 'error' });
       return;
@@ -176,7 +176,7 @@ const MyBookings = () => {
 
   const handleDeleteFeedback = async (feedbackId: number) => {
     setConfirmDelete(null);
-    
+
     try {
       await deleteFeedback(feedbackId);
       setToast({ message: 'Feedback deleted successfully!', type: 'success' });
@@ -211,7 +211,7 @@ const MyBookings = () => {
       )}
       <div style={styles.container}>
         <h1 style={styles.title}>My Bookings</h1>
-        
+
         <div style={styles.contactBox}>
           <p style={styles.contactText}>
             📞 For any queries or to cancel a booking, please contact the manager at <strong>9XXXXXXXXX</strong>
@@ -230,8 +230,8 @@ const MyBookings = () => {
             <div key={booking.id} style={styles.card}>
               <div style={styles.row}>
                 {booking.room.images && booking.room.images.length > 0 && (
-                  <img 
-                    src={booking.room.images[0]} 
+                  <img
+                    src={booking.room.images[0]}
                     alt="Room"
                     style={styles.img}
                     loading="lazy"
@@ -249,11 +249,11 @@ const MyBookings = () => {
                       {booking.status}
                     </span>
                   </div>
-                  
+
                   <p style={styles.text}>
                     📅 {new Date(booking.start_time).toLocaleDateString()} → {new Date(booking.end_time).toLocaleDateString()}
                   </p>
-                  
+
                   <div style={styles.costBox}>
                     <p style={styles.costLine}>
                       ⏱️ Duration: {getDurationText(booking)}
@@ -266,7 +266,7 @@ const MyBookings = () => {
                   {/* Feedback */}
                   {isBookingCompleted(booking) && (() => {
                     const userFeedback = getUserFeedback(booking);
-                    
+
                     if (showFeedbackForm === booking.id) {
                       return (
                         <div style={styles.form}>
@@ -318,7 +318,7 @@ const MyBookings = () => {
                         </div>
                       );
                     }
-                    
+
                     if (userFeedback) {
                       console.log('Displaying feedback:', userFeedback, 'Rating:', userFeedback.rating);
                       return (
@@ -368,7 +368,7 @@ const MyBookings = () => {
                                 title="Edit review"
                               >
                                 <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                  <path d="M11.5 1.5L14.5 4.5L5 14H2V11L11.5 1.5Z" stroke="#6B7280" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                  <path d="M11.5 1.5L14.5 4.5L5 14H2V11L11.5 1.5Z" stroke="#6B7280" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>
                               </button>
                               <button
@@ -387,7 +387,7 @@ const MyBookings = () => {
                                 title="Delete review"
                               >
                                 <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                  <path d="M2 4H14M5 4V2H11V4M6 7V12M10 7V12M3 4L4 14H12L13 4" stroke="#6B7280" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                  <path d="M2 4H14M5 4V2H11V4M6 7V12M10 7V12M3 4L4 14H12L13 4" stroke="#6B7280" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>
                               </button>
                             </div>
@@ -395,7 +395,7 @@ const MyBookings = () => {
                         </div>
                       );
                     }
-                    
+
                     return (
                       <button
                         onClick={() => {
@@ -419,22 +419,26 @@ const MyBookings = () => {
   );
 };
 
+const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+
 const styles = {
   wrapper: {
     minHeight: '100vh',
     backgroundColor: '#F9FAFB',
-    paddingTop: window.innerWidth <= 768 ? '120px' : '120px',
+    paddingTop: isMobile ? '180px' : '140px',
   },
   container: {
     maxWidth: '900px',
     margin: '0 auto',
-    padding: window.innerWidth <= 768 ? '1.5rem 1rem' : '2rem 1rem',
+    padding: isMobile ? '1.5rem 1rem' : '2rem 1rem',
+    width: '100%',
+    boxSizing: 'border-box' as const,
   },
   title: {
-    fontSize: '2rem',
+    fontSize: isMobile ? '1.75rem' : '2rem',
     fontWeight: '700',
     color: '#1F2937',
-    marginBottom: '1rem',
+    marginBottom: '1.5rem',
     marginTop: '0',
   },
   contactBox: {
@@ -442,7 +446,7 @@ const styles = {
     border: '1px solid #6C5CE7',
     borderRadius: '8px',
     padding: '1rem',
-    marginTop: window.innerWidth <= 768 ? '1.5rem' : '0',
+    marginTop: '3rem',
     marginBottom: '2rem',
   },
   contactText: {
@@ -467,6 +471,8 @@ const styles = {
     padding: '1rem',
     marginBottom: '1rem',
     border: '1px solid #e5e5e5',
+    width: '100%',
+    boxSizing: 'border-box' as const,
   },
   row: {
     display: 'flex',
