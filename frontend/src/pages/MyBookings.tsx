@@ -187,30 +187,7 @@ const MyBookings = () => {
     }
   };
 
-  const handleCancelBooking = async (bookingId: number, roomNumber: string) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to cancel your booking for Room ${roomNumber}?\n\n` +
-      `This action cannot be undone.`
-    );
 
-    if (!confirmed) return;
-
-    try {
-      await cancelBooking(bookingId);
-      setToast({ message: 'Booking cancelled successfully!', type: 'success' });
-      loadBookings(); // Reload bookings
-    } catch (error: any) {
-      console.error('Failed to cancel booking', error);
-      setToast({ message: `Failed to cancel booking: ${error.response?.data?.message || error.message}`, type: 'error' });
-    }
-  };
-
-  const canCancelBooking = (booking: any) => {
-    // Can only cancel if booking hasn't started yet
-    const now = new Date();
-    const startDate = new Date(booking.start_time);
-    return startDate > now && booking.status !== 'CANCELLED';
-  };
 
   if (loading) {
     return <div style={styles.container}>Loading...</div>;

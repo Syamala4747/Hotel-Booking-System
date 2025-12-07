@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { getRoomById, getRoomFeedback } from '../api/roomsApi';
 import { createBooking } from '../api/bookingsApi';
-import { createFeedback } from '../api/feedbackApi';
 import { useAuth } from '../context/AuthContext';
 
 const RoomDetail = () => {
@@ -14,9 +13,6 @@ const RoomDetail = () => {
   const [feedbacks, setFeedbacks] = useState<any[]>([]);
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
-  const [rating, setRating] = useState(5);
-  const [comment, setComment] = useState('');
-  const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [selectedPayment, setSelectedPayment] = useState('');
@@ -164,21 +160,7 @@ const RoomDetail = () => {
     }
   };
 
-  const handleFeedback = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setMessage('');
-    setError('');
 
-    try {
-      await createFeedback(Number(id), { rating, comment });
-      setMessage('Feedback submitted!');
-      setComment('');
-      setRating(5);
-      loadRoomData();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Feedback submission failed');
-    }
-  };
 
   if (loading) return <div style={styles.loadingContainer}>Loading...</div>;
   if (!room) return <div style={styles.loadingContainer}>Room not found</div>;
