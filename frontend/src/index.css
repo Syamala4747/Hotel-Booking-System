@@ -1,0 +1,411 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* High-quality image rendering - Force HD quality */
+img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-font-smoothing: subpixel-antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Prevent browser from downscaling images */
+  max-width: 100%;
+  height: auto;
+}
+
+/* Override for room images specifically - use high quality */
+img[src*="uploads/"],
+img[src*="room-"] {
+  image-rendering: auto !important;
+  image-rendering: high-quality !important;
+  image-rendering: -webkit-optimize-contrast !important;
+}
+
+html {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #f5f7fa;
+  min-height: 100vh;
+  font-size: 14px;
+  color: #2c3e50;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+#root {
+  min-height: 100vh;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.3;
+  }
+}
+
+@keyframes bounce {
+  0%, 80%, 100% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+/* Prevent cursor/caret from appearing everywhere */
+* {
+  caret-color: auto;
+}
+
+h1, h2, h3, h4, h5, h6, p, span, div:not(input):not(textarea) {
+  caret-color: transparent;
+}
+
+input, textarea, [contenteditable="true"] {
+  caret-color: auto;
+}
+
+/* Navbar Link Styles */
+.navbar-link:hover {
+  color: #6C5CE7 !important;
+  background-color: #F8F9FF !important;
+}
+
+.navbar-link:active {
+  transform: scale(0.98);
+}
+
+/* Responsive Styles for Mobile */
+@media (max-width: 768px) {
+  /* Hide left side on mobile for Login/Signup pages */
+  .auth-left-side {
+    display: none !important;
+  }
+  
+  .auth-container {
+    flex-direction: column !important;
+  }
+  
+  .auth-right-side {
+    padding: 2rem 1.5rem !important;
+    min-height: 100vh !important;
+  }
+  
+  .auth-form-title {
+    font-size: 1.75rem !important;
+  }
+  
+  /* Landing page responsive */
+  .landing-hero-content {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+    padding: 2rem 1rem !important;
+  }
+  
+  .landing-hero-right {
+    display: none !important;
+  }
+  
+  .landing-hero-title {
+    font-size: 2.5rem !important;
+    line-height: 1.2 !important;
+  }
+  
+  .landing-stats {
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    gap: 1rem !important;
+  }
+  
+  .landing-navbar-links a {
+    display: none !important;
+  }
+  
+  .landing-navbar-links button {
+    font-size: 0.85rem !important;
+    padding: 0.5rem 1rem !important;
+  }
+  
+  .landing-features-grid,
+  .landing-rooms-grid,
+  .landing-testimonials-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+  
+  .landing-footer-content {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+    text-align: center !important;
+  }
+  
+  /* General mobile adjustments */
+  body {
+    font-size: 14px;
+  }
+  
+  section {
+    padding: 3rem 1rem !important;
+  }
+}
+
+/* Dashboard Mobile Responsive */
+@media (max-width: 768px) {
+  /* Hero sections on all pages */
+  .dashboard-hero {
+    padding: 2.5rem 1rem !important;
+    margin-top: 70px !important;
+  }
+  
+  .dashboard-hero-title {
+    font-size: 2rem !important;
+    line-height: 1.2 !important;
+  }
+  
+  .dashboard-hero-desc {
+    font-size: 0.95rem !important;
+    padding: 0 0.5rem !important;
+  }
+  
+  /* Stats row - stack on mobile */
+  .dashboard-stats-row {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+    max-width: 100% !important;
+  }
+  
+  /* Tables - make scrollable on mobile */
+  table {
+    display: block !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  thead, tbody, tr {
+    display: table !important;
+    width: 100% !important;
+    table-layout: fixed !important;
+  }
+  
+  th, td {
+    font-size: 0.8rem !important;
+    padding: 0.75rem 0.5rem !important;
+  }
+  
+  /* Chatbot - adjust for mobile */
+  .chatbot-window {
+    width: 100% !important;
+    height: 100% !important;
+    bottom: 0 !important;
+    right: 0 !important;
+    border-radius: 0 !important;
+  }
+  
+  .chatbot-toggle {
+    bottom: 1rem !important;
+    right: 1rem !important;
+    width: 50px !important;
+    height: 50px !important;
+  }
+  
+  /* Content sections */
+  .dashboard-content-section {
+    padding: 2rem 1rem !important;
+  }
+  
+  /* Room cards grid */
+  .dashboard-rooms-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+  
+  /* Bookings list */
+  .dashboard-bookings-list {
+    gap: 1.5rem !important;
+  }
+  
+  /* Feedback cards */
+  .dashboard-feedback-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+  
+  /* Admin table - make scrollable */
+  .dashboard-table-container {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    border-radius: 12px !important;
+  }
+  
+  .dashboard-table {
+    min-width: 800px !important;
+    font-size: 0.85rem !important;
+  }
+  
+  .dashboard-table th,
+  .dashboard-table td {
+    padding: 0.875rem !important;
+    font-size: 0.85rem !important;
+  }
+  
+  /* Admin form cards */
+  .dashboard-form-card {
+    padding: 1.5rem !important;
+    margin: 0 !important;
+  }
+  
+  /* Buttons */
+  .dashboard-add-button {
+    padding: 0.875rem 1.5rem !important;
+    font-size: 0.95rem !important;
+    width: 100% !important;
+    max-width: 300px !important;
+  }
+  
+  /* Filter section */
+  .dashboard-filter-section {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 1rem !important;
+  }
+  
+  /* Navbar on mobile */
+  .navbar-links {
+    gap: 0.25rem !important;
+    flex-wrap: nowrap !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+  }
+  
+  .navbar-link {
+    font-size: 0.65rem !important;
+    padding: 0.35rem 0.5rem !important;
+    white-space: nowrap !important;
+    font-weight: 600 !important;
+  }
+  
+  /* Container max width */
+  section > div {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  
+  /* Card adjustments */
+  [style*="borderRadius"] {
+    border-radius: 12px !important;
+  }
+  
+  /* Prevent horizontal scroll */
+  body {
+    overflow-x: hidden !important;
+  }
+  
+  #root {
+    overflow-x: hidden !important;
+  }
+}
+
+/* Tablet responsive */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .landing-hero-content {
+    gap: 2rem !important;
+  }
+  
+  .landing-hero-title {
+    font-size: 3rem !important;
+  }
+  
+  .landing-features-grid,
+  .landing-rooms-grid,
+  .landing-testimonials-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .landing-footer-content {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  /* Dashboard tablet adjustments */
+  .dashboard-stats-row {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .dashboard-rooms-grid,
+  .dashboard-feedback-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}

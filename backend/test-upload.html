@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Image Upload</title>
+</head>
+<body>
+    <h1>Test Image Upload</h1>
+    <p>Login Token: <input type="text" id="token" style="width: 500px" placeholder="Paste JWT token here"></p>
+    <p>Select Images: <input type="file" id="files" multiple accept="image/*"></p>
+    <button onclick="uploadImages()">Upload</button>
+    <div id="result"></div>
+    
+    <script>
+        async function uploadImages() {
+            const token = document.getElementById('token').value;
+            const files = document.getElementById('files').files;
+            const resultDiv = document.getElementById('result');
+            
+            if (!token) {
+                alert('Please enter token');
+                return;
+            }
+            
+            if (files.length === 0) {
+                alert('Please select files');
+                return;
+            }
+            
+            const formData = new FormData();
+            for (let file of files) {
+                formData.append('images', file);
+            }
+            
+            try {
+                resultDiv.innerHTML = 'Uploading...';
+                const response = await fetch('http://localhost:3000/upload/images', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                resultDiv.innerHTML = '<h3>Success!</h3><pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                
+                // Show images
+                data.images.forEach(url => {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.style.width = '200px';
+                    img.style.margin = '10px';
+                    resultDiv.appendChild(img);
+                });
+            } catch (error) {
+                resultDiv.innerHTML = '<h3>Error!</h3><pre>' + error.message + '</pre>';
+            }
+        }
+    </script>
+</body>
+</html>
