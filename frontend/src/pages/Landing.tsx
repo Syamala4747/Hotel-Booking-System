@@ -43,8 +43,8 @@ const Landing = () => {
               <span style={styles.gradient}>Luxury Redefined</span>
             </h1>
             <p style={styles.heroDesc}>
-              Your gateway to premium accommodations with AI-powered recommendations. 
-              Book hourly, daily, or extended stays with flexible pricing and instant confirmation. 
+              Your gateway to premium accommodations with AI-powered recommendations.
+              Book hourly, daily, or extended stays with flexible pricing and instant confirmation.
               Experience seamless booking with multiple payment options and 24/7 support.
             </p>
             <div style={styles.heroButtons}>
@@ -74,9 +74,9 @@ const Landing = () => {
           </div>
           <div style={styles.heroRight} className="landing-hero-right">
             <div style={styles.imageCard}>
-              <img 
-                src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&q=95" 
-                alt="Luxury Hotel" 
+              <img
+                src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&q=95"
+                alt="Luxury Hotel"
                 style={styles.heroImage}
                 loading="eager"
                 decoding="async"
@@ -126,8 +126,8 @@ const Landing = () => {
                 color: '#6C5CE7'
               },
             ].map((step, idx) => (
-              <div 
-                key={idx} 
+              <div
+                key={idx}
                 style={styles.stepCard}
                 onMouseOver={(e) => {
                   e.currentTarget.style.transform = 'translateY(-8px)';
@@ -140,8 +140,8 @@ const Landing = () => {
                   e.currentTarget.style.boxShadow = 'none';
                 }}
               >
-                <div style={{...styles.stepNumber, backgroundColor: step.color}}>{step.step}</div>
-                <div style={{...styles.stepIcon, backgroundColor: step.color + '20'}}>{step.icon}</div>
+                <div style={{ ...styles.stepNumber, backgroundColor: step.color }}>{step.step}</div>
+                <div style={{ ...styles.stepIcon, backgroundColor: step.color + '20' }}>{step.icon}</div>
                 <h3 style={styles.stepTitle}>{step.title}</h3>
                 <p style={styles.stepDesc}>{step.desc}</p>
                 {idx < 2 && <div style={styles.stepArrow}>→</div>}
@@ -162,58 +162,58 @@ const Landing = () => {
 
           <div style={styles.featuresGrid} className="landing-features-grid">
             {[
-              { 
-                icon: '🤖', 
-                title: 'AI Assistant', 
+              {
+                icon: '🤖',
+                title: 'AI Assistant',
                 desc: 'Get personalized room recommendations from our intelligent chatbot based on your preferences and budget',
                 color: '#10B981'
               },
-              { 
-                icon: '⏰', 
-                title: 'Flexible Booking', 
+              {
+                icon: '⏰',
+                title: 'Flexible Booking',
                 desc: 'Book by the hour, half-day, or full-day. Minimum 6-hour stays with transparent pricing for every duration',
                 color: '#6C5CE7'
               },
-              { 
-                icon: '🖼️', 
-                title: 'Visual Gallery', 
+              {
+                icon: '🖼️',
+                title: 'Visual Gallery',
                 desc: 'Browse up to 20 high-quality images per room. See exactly what you\'re booking before you arrive',
                 color: '#F59E0B'
               },
-              { 
-                icon: '💎', 
-                title: 'Premium Rooms', 
+              {
+                icon: '💎',
+                title: 'Premium Rooms',
                 desc: 'Choose from Single, Double, Suite, and Deluxe rooms. Each handpicked for comfort and luxury',
                 color: '#EC4899'
               },
-              { 
-                icon: '🔐', 
-                title: 'Secure Payment', 
+              {
+                icon: '🔐',
+                title: 'Secure Payment',
                 desc: 'Multiple payment options with bank-level security. Credit/Debit cards, UPI, or Cash on arrival',
                 color: '#8B5CF6'
               },
-              { 
-                icon: '⭐', 
-                title: 'Guest Reviews', 
+              {
+                icon: '⭐',
+                title: 'Guest Reviews',
                 desc: 'Read authentic reviews from verified guests. Leave your own feedback to help future travelers',
                 color: '#EF4444'
               },
-              { 
-                icon: '📱', 
-                title: 'Instant Confirmation', 
+              {
+                icon: '📱',
+                title: 'Instant Confirmation',
                 desc: 'Get immediate booking confirmation. Track your reservation status in real-time from your dashboard',
                 color: '#3B82F6'
               },
-              { 
-                icon: '🌟', 
-                title: '24/7 Support', 
+              {
+                icon: '🌟',
+                title: '24/7 Support',
                 desc: 'Round-the-clock customer service. Our team is always ready to assist with any questions or concerns',
                 color: '#14B8A6'
               },
             ].map((feature, idx) => (
-              <div 
-                key={idx} 
-                style={{...styles.featureCard, borderTop: `4px solid ${feature.color}`}}
+              <div
+                key={idx}
+                style={{ ...styles.featureCard, borderTop: `4px solid ${feature.color}` }}
                 onMouseOver={(e) => {
                   e.currentTarget.style.transform = 'translateY(-8px)';
                   e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.12)';
@@ -223,7 +223,7 @@ const Landing = () => {
                   e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.08)';
                 }}
               >
-                <div style={{...styles.featureIcon, backgroundColor: feature.color + '20'}}>
+                <div style={{ ...styles.featureIcon, backgroundColor: feature.color + '20' }}>
                   {feature.icon}
                 </div>
                 <h3 style={styles.featureTitle}>{feature.title}</h3>
@@ -245,27 +245,27 @@ const Landing = () => {
 
           <div style={styles.roomsGrid} className="landing-rooms-grid">
             {[
-              { 
+              {
                 img: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=600&q=80',
                 title: 'Deluxe Suite',
                 price: '₹2999',
                 rating: '4.9'
               },
-              { 
+              {
                 img: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=600&q=80',
                 title: 'Ocean View',
                 price: '₹3999',
                 rating: '5.0'
               },
-              { 
+              {
                 img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600&q=80',
                 title: 'Presidential',
                 price: '₹5999',
                 rating: '4.8'
               },
             ].map((room, idx) => (
-              <div 
-                key={idx} 
+              <div
+                key={idx}
                 style={styles.roomCard}
                 onMouseOver={(e) => {
                   const imgEl = e.currentTarget.querySelector('img') as HTMLImageElement;
@@ -277,9 +277,9 @@ const Landing = () => {
                 }}
               >
                 <div style={styles.roomImageWrapper}>
-                  <img 
-                    src={room.img} 
-                    alt={room.title} 
+                  <img
+                    src={room.img}
+                    alt={room.title}
                     style={styles.roomImage}
                     loading="lazy"
                     decoding="async"
@@ -292,8 +292,8 @@ const Landing = () => {
                     <span style={styles.priceAmount}>{room.price}</span>
                     <span style={styles.priceLabel}>/night</span>
                   </div>
-                  <button 
-                    onClick={() => navigate('/signup')} 
+                  <button
+                    onClick={() => navigate('/signup')}
                     style={styles.roomBtn}
                     onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#5B4FE9'}
                     onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#6C5CE7'}
@@ -317,7 +317,7 @@ const Landing = () => {
               <p style={styles.benefitsDesc}>
                 We're not just another booking platform. We're your partner in creating unforgettable travel experiences.
               </p>
-              
+
               <div style={styles.benefitsList}>
                 {[
                   {
@@ -351,8 +351,8 @@ const Landing = () => {
                 ))}
               </div>
 
-              <button 
-                onClick={() => navigate('/signup')} 
+              <button
+                onClick={() => navigate('/signup')}
                 style={styles.benefitsBtn}
                 onMouseOver={(e) => {
                   e.currentTarget.style.transform = 'translateX(5px)';
@@ -374,8 +374,8 @@ const Landing = () => {
                   { number: '4.9/5', label: 'Average Rating', icon: '⭐' },
                   { number: '24/7', label: 'Support Available', icon: '💬' },
                 ].map((stat, idx) => (
-                  <div 
-                    key={idx} 
+                  <div
+                    key={idx}
                     style={styles.statCard}
                     onMouseOver={(e) => {
                       e.currentTarget.style.transform = 'scale(1.05)';
@@ -455,8 +455,8 @@ const Landing = () => {
             <p style={styles.ctaText}>
               Join thousands of happy travelers and experience luxury like never before
             </p>
-            <button 
-              onClick={() => navigate('/signup')} 
+            <button
+              onClick={() => navigate('/signup')}
               style={styles.ctaButton}
               onMouseOver={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)';

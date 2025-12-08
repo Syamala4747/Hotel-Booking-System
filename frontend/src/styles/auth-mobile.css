@@ -1,0 +1,146 @@
+/* Mobile styles for Login and Signup pages */
+
+@media (max-width: 768px) {
+  /* Hide left side completely on mobile */
+  .auth-left-side {
+    display: none !important;
+  }
+
+  /* Container adjustments */
+  .auth-container {
+    flex-direction: column !important;
+    padding: 2rem 1rem !important;
+    gap: 0 !important;
+  }
+
+  /* Right side takes full width */
+  .auth-right-side {
+    width: 100% !important;
+    padding: 0 !important;
+    background: transparent !important;
+  }
+
+  /* Form container */
+  .auth-form-container,
+  .signup-form-container {
+    max-width: 100% !important;
+    padding: 2rem 1.5rem !important;
+    border-radius: 16px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
+  }
+
+  /* Form title */
+  .auth-form-title {
+    font-size: 1.75rem !important;
+  }
+
+  /* Form subtitle */
+  .auth-form-container p,
+  .signup-form-container p {
+    font-size: 0.95rem !important;
+  }
+
+  /* Input fields */
+  .auth-input,
+  .signup-input {
+    font-size: 16px !important; /* Prevents zoom on iOS */
+    padding: 0.875rem 1rem !important;
+  }
+
+  /* Buttons */
+  .auth-button,
+  .signup-button {
+    padding: 1rem !important;
+    font-size: 1rem !important;
+  }
+
+  /* Form groups */
+  .auth-form-container > form > div {
+    margin-bottom: 1rem !important;
+  }
+
+  /* Error/Success messages */
+  .auth-form-container > div[style*="backgroundColor"] {
+    padding: 0.875rem !important;
+    font-size: 0.9rem !important;
+  }
+
+  /* Footer mobile styles */
+  .auth-footer-content {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+    text-align: center !important;
+  }
+
+  .auth-footer-links {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2rem !important;
+  }
+
+  .auth-footer-content > div:not(:first-child) {
+    text-align: center !important;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 1.5rem 0.75rem !important;
+  }
+
+  .auth-form-container,
+  .signup-form-container {
+    padding: 1.5rem 1rem !important;
+    border-radius: 12px !important;
+  }
+
+  .auth-form-title {
+    font-size: 1.5rem !important;
+  }
+
+  .auth-input,
+  .signup-input {
+    padding: 0.75rem 0.875rem !important;
+  }
+
+  .auth-button,
+  .signup-button {
+    padding: 0.875rem !important;
+  }
+}
+
+/* Tablet styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .auth-container {
+    padding: 2rem 1.5rem !important;
+    gap: 2rem !important;
+  }
+
+  .auth-left-side {
+    flex: 1 !important;
+  }
+
+  .auth-right-side {
+    flex: 1 !important;
+  }
+
+  .auth-form-container,
+  .signup-form-container {
+    max-width: 100% !important;
+  }
+
+  /* Adjust hotel image size */
+  .hotel-image {
+    height: 300px !important;
+  }
+
+  /* Adjust stat cards */
+  .stat-card {
+    padding: 1rem !important;
+  }
+
+  .stat-card > div:nth-child(2) {
+    font-size: 1.5rem !important;
+  }
+}

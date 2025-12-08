@@ -1,14 +1,26 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { signup as signupApi } from '../api/authApi';
+import AuthNavbar from '../components/AuthNavbar';
+import AuthFooter from '../components/AuthFooter';
+import '../styles/auth-mobile.css';
 
 // Add animations
 const styleSheet = document.createElement("style");
 styleSheet.textContent = `
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
   @keyframes slideInLeft {
     from {
       opacity: 0;
-      transform: translateX(-50px);
+      transform: translateX(-60px);
     }
     to {
       opacity: 1;
@@ -19,7 +31,7 @@ styleSheet.textContent = `
   @keyframes slideInRight {
     from {
       opacity: 0;
-      transform: translateX(50px);
+      transform: translateX(60px);
     }
     to {
       opacity: 1;
@@ -27,34 +39,150 @@ styleSheet.textContent = `
     }
   }
   
-  .signup-left-side {
-    animation: slideInLeft 0.8s ease-out;
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-15px);
+    }
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+  }
+  
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+  
+  .auth-container {
+    animation: fadeIn 0.8s ease-out;
+  }
+  
+  .auth-left-side {
+    animation: slideInLeft 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  
+  .auth-right-side {
+    animation: slideInRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   
   .signup-form-container {
-    animation: slideInRight 0.8s ease-out;
+    animation: scaleIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s backwards;
+  }
+  
+  .auth-form-title {
+    animation: slideUp 0.6s ease-out 0.3s backwards;
   }
   
   .signup-input {
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
   .signup-input:focus {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
   }
   
   .signup-button {
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
   }
   
-  .signup-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+  .signup-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
   }
   
-  .signup-button:active {
-    transform: translateY(0);
+  .signup-button:hover::before {
+    left: 100%;
+  }
+  
+  .hotel-image {
+    animation: scaleIn 1s ease-out 0.4s backwards;
+    transition: transform 0.5s ease;
+  }
+  
+  .hotel-image:hover {
+    transform: scale(1.05);
+  }
+  
+  .floating-badge {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  .stat-card {
+    animation: slideUp 0.6s ease-out backwards;
+  }
+  
+  .stat-card:nth-child(1) {
+    animation-delay: 0.5s;
+  }
+  
+  .stat-card:nth-child(2) {
+    animation-delay: 0.6s;
+  }
+  
+  .stat-card:nth-child(3) {
+    animation-delay: 0.7s;
+  }
+  
+  .stat-card:hover {
+    animation: pulse 0.6s ease-in-out;
+  }
+  
+  /* Mobile responsive animations */
+  @media (max-width: 768px) {
+    .auth-left-side {
+      animation: none !important;
+    }
+    
+    .auth-right-side {
+      animation: slideUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    .signup-form-container {
+      animation: scaleIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s backwards;
+    }
   }
 `;
 document.head.appendChild(styleSheet);
@@ -82,48 +210,54 @@ const Signup = () => {
   };
 
   return (
-    <div style={styles.container} className="auth-container">
-      {/* Left Side - Image */}
-      <div style={styles.leftSide} className="auth-left-side">
-        <div style={styles.overlay}></div>
-        <div style={styles.leftContent}>
-          <Link to="/" style={styles.backLink}>← Back to Home</Link>
-          <div style={styles.brandSection}>
-            <h1 style={styles.brandLogo}>🥇 SmartStay</h1>
-            <p style={styles.brandTagline}>Join thousands of happy travelers</p>
-          </div>
-          <div style={styles.features}>
-            <div style={styles.feature}>
-              <div style={styles.featureIcon}>✓</div>
-              <div>
-                <div style={styles.featureTitle}>Free Account</div>
-                <div style={styles.featureDesc}>No hidden fees or charges</div>
+    <>
+      <AuthNavbar />
+      <div style={styles.wrapper}>
+        <div style={styles.container} className="auth-container">
+          {/* Left Side - Hero Content */}
+          <div style={styles.leftSide} className="auth-left-side">
+            <div style={styles.leftContent}>
+              <div style={styles.brandSection}>
+                <h1 style={styles.brandLogo}>🥇 SmartStay</h1>
+                <p style={styles.brandTagline}>Join thousands of travelers and start your journey</p>
               </div>
-            </div>
-            <div style={styles.feature}>
-              <div style={styles.featureIcon}>✓</div>
-              <div>
-                <div style={styles.featureTitle}>Exclusive Deals</div>
-                <div style={styles.featureDesc}>Access member-only discounts</div>
+              
+              <div style={styles.imageCard}>
+                <img
+                  src="https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800&q=80"
+                  alt="Luxury Hotel Room"
+                  style={styles.hotelImage}
+                  className="hotel-image"
+                />
+                <div style={styles.floatingBadge} className="floating-badge">✨ Premium Rooms</div>
               </div>
-            </div>
-            <div style={styles.feature}>
-              <div style={styles.featureIcon}>✓</div>
-              <div>
-                <div style={styles.featureTitle}>Easy Management</div>
-                <div style={styles.featureDesc}>Track all your bookings in one place</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Right Side - Form */}
-      <div style={styles.rightSide} className="auth-right-side">
-        <div style={styles.formContainer}>
+              <div style={styles.features}>
+                <div style={styles.feature} className="stat-card">
+                  <div style={styles.featureIcon}>⚡</div>
+                  <div style={styles.featureTitle}>Instant</div>
+                  <div style={styles.featureDesc}>Quick Booking</div>
+                </div>
+                <div style={styles.feature} className="stat-card">
+                  <div style={styles.featureIcon}>🔐</div>
+                  <div style={styles.featureTitle}>Secure</div>
+                  <div style={styles.featureDesc}>Safe Payment</div>
+                </div>
+                <div style={styles.feature} className="stat-card">
+                  <div style={styles.featureIcon}>💎</div>
+                  <div style={styles.featureTitle}>Best</div>
+                  <div style={styles.featureDesc}>Price Deals</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Side - Form */}
+          <div style={styles.rightSide} className="auth-right-side">
+        <div style={styles.formContainer} className="signup-form-container">
           <div style={styles.formHeader}>
             <h2 style={styles.formTitle} className="auth-form-title">Create Account</h2>
-            <p style={styles.formSubtitle}>Start your journey with us today</p>
+            <p style={styles.formSubtitle}>Join SmartStay and start booking</p>
           </div>
           
           {error && <div style={styles.error}>{error}</div>}
@@ -139,8 +273,17 @@ const Signup = () => {
                 required
                 placeholder="John Doe"
                 style={styles.input}
-                onFocus={(e) => e.currentTarget.style.borderColor = '#6C5CE7'}
-                onBlur={(e) => e.currentTarget.style.borderColor = '#E5E7EB'}
+                className="signup-input"
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = '#6C5CE7';
+                  e.currentTarget.style.backgroundColor = '#FFFFFF';
+                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(108, 92, 231, 0.1)';
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = '#E5E7EB';
+                  e.currentTarget.style.backgroundColor = '#F9FAFB';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
               />
             </div>
             
@@ -153,8 +296,17 @@ const Signup = () => {
                 required
                 placeholder="you@example.com"
                 style={styles.input}
-                onFocus={(e) => e.currentTarget.style.borderColor = '#6C5CE7'}
-                onBlur={(e) => e.currentTarget.style.borderColor = '#E5E7EB'}
+                className="signup-input"
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = '#6C5CE7';
+                  e.currentTarget.style.backgroundColor = '#FFFFFF';
+                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(108, 92, 231, 0.1)';
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = '#E5E7EB';
+                  e.currentTarget.style.backgroundColor = '#F9FAFB';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
               />
             </div>
             
@@ -168,16 +320,32 @@ const Signup = () => {
                 minLength={6}
                 placeholder="Minimum 6 characters"
                 style={styles.input}
-                onFocus={(e) => e.currentTarget.style.borderColor = '#6C5CE7'}
-                onBlur={(e) => e.currentTarget.style.borderColor = '#E5E7EB'}
+                className="signup-input"
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = '#6C5CE7';
+                  e.currentTarget.style.backgroundColor = '#FFFFFF';
+                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(108, 92, 231, 0.1)';
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = '#E5E7EB';
+                  e.currentTarget.style.backgroundColor = '#F9FAFB';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
               />
             </div>
             
             <button 
               type="submit" 
               style={styles.button}
-              onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-              onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+              className="signup-button"
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(108, 92, 231, 0.4)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(108, 92, 231, 0.3)';
+              }}
             >
               Create Account
             </button>
@@ -191,126 +359,151 @@ const Signup = () => {
             Already have an account? <Link to="/login" style={styles.link}>Sign in here</Link>
           </p>
         </div>
+          </div>
+        </div>
       </div>
-    </div>
+      <AuthFooter />
+    </>
   );
 };
 
 const styles = {
+  wrapper: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    minHeight: '100vh',
+    paddingTop: '70px',
+    background: 'linear-gradient(135deg, #667EEA 0%, #764BA2 100%)',
+  },
   container: {
     display: 'flex',
-    minHeight: '100vh',
-    '@media (maxWidth: 768px)': {
-      flexDirection: 'column' as const,
-    },
-  },
-  // Left Side
+    flex: 1,
+    maxWidth: '1200px',
+    margin: '0 auto',
+    width: '100%',
+    padding: '3rem 2rem',
+    gap: '4rem',
+    alignItems: 'center',
+  } as React.CSSProperties,
   leftSide: {
     flex: 1,
-    minHeight: '300px',
-    background: 'linear-gradient(135deg, #6C5CE7 0%, #A29BFE 100%)',
-    position: 'relative' as const,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '3rem',
-    backgroundImage: 'url(https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1200&q=80)',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-  },
-  overlay: {
-    position: 'absolute' as const,
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    background: 'linear-gradient(135deg, rgba(108, 92, 231, 0.95) 0%, rgba(162, 155, 254, 0.9) 100%)',
-  },
-  leftContent: {
-    position: 'relative' as const,
-    zIndex: 1,
-    color: 'white',
-    maxWidth: '500px',
-  },
-  backLink: {
-    color: 'white',
-    textDecoration: 'none',
-    fontSize: '0.95rem',
-    fontWeight: '500',
-    marginBottom: '3rem',
-    display: 'inline-block',
-    opacity: 0.9,
-    transition: 'opacity 0.3s',
-  },
-  brandSection: {
-    marginBottom: '4rem',
-  },
-  brandLogo: {
-    fontSize: '3rem',
-    fontWeight: '700',
-    marginBottom: '1rem',
-  },
-  brandTagline: {
-    fontSize: '1.2rem',
-    opacity: 0.95,
-    fontWeight: '300',
-  },
-  features: {
     display: 'flex',
     flexDirection: 'column' as const,
     gap: '2rem',
   },
-  feature: {
+  overlay: {
+    display: 'none',
+  },
+  leftContent: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '2rem',
+  },
+  brandSection: {
+    marginBottom: '1rem',
+  },
+  abstractShape1: {
+    display: 'none',
+  },
+  abstractShape2: {
+    display: 'none',
+  },
+  brandLogo: {
+    fontSize: '3rem',
+    fontWeight: '800',
+    marginBottom: '1rem',
+    color: 'white',
+    letterSpacing: '-0.5px',
+  },
+  brandTagline: {
+    fontSize: '1.25rem',
+    fontWeight: '400',
+    lineHeight: '1.6',
+    color: 'rgba(255, 255, 255, 0.95)',
+  },
+  imageCard: {
+    position: 'relative' as const,
+    borderRadius: '20px',
+    overflow: 'hidden',
+    boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+  },
+  hotelImage: {
+    width: '100%',
+    height: '400px',
+    objectFit: 'cover' as const,
+    display: 'block',
+  },
+  floatingBadge: {
+    position: 'absolute' as const,
+    top: '1.5rem',
+    right: '1.5rem',
+    backgroundColor: '#FFD700',
+    color: '#1F2937',
+    padding: '0.75rem 1.5rem',
+    borderRadius: '25px',
+    fontSize: '0.9rem',
+    fontWeight: '700',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+  },
+  features: {
     display: 'flex',
     gap: '1rem',
-    alignItems: 'flex-start',
+    marginTop: '1.5rem',
+  },
+  feature: {
+    flex: 1,
+    padding: '1.5rem',
+    background: 'rgba(255, 255, 255, 0.15)',
+    borderRadius: '12px',
+    backdropFilter: 'blur(10px)',
+    border: '1px solid rgba(255, 255, 255, 0.2)',
+    textAlign: 'center' as const,
+    transition: 'all 0.3s ease',
+    cursor: 'pointer',
   },
   featureIcon: {
-    width: '32px',
-    height: '32px',
-    borderRadius: '50%',
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: '1rem',
-    fontWeight: '700',
-    flexShrink: 0,
+    fontSize: '2rem',
+    marginBottom: '0.75rem',
   },
   featureTitle: {
-    fontSize: '1.1rem',
-    fontWeight: '600',
+    fontSize: '1.75rem',
+    fontWeight: '700',
     marginBottom: '0.25rem',
+    color: '#FFFFFF',
   },
   featureDesc: {
-    fontSize: '0.95rem',
-    opacity: 0.9,
+    fontSize: '0.85rem',
+    color: 'rgba(255, 255, 255, 0.85)',
   },
-  // Right Side
   rightSide: {
     flex: 1,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '3rem',
-    backgroundColor: '#FFFFFF',
   },
   formContainer: {
     width: '100%',
-    maxWidth: '450px',
+    maxWidth: '480px',
+    backgroundColor: '#FFFFFF',
+    padding: '3rem 2.5rem',
+    borderRadius: '20px',
+    boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
   },
   formHeader: {
-    marginBottom: '2.5rem',
+    marginBottom: '2rem',
+    textAlign: 'center' as const,
   },
   formTitle: {
-    fontSize: '2rem',
-    fontWeight: '700',
+    fontSize: '2.25rem',
+    fontWeight: '800',
     color: '#1F2937',
     marginBottom: '0.5rem',
+    letterSpacing: '-0.025em',
   },
   formSubtitle: {
     fontSize: '1rem',
     color: '#6B7280',
+    fontWeight: '400',
   },
   error: {
     backgroundColor: '#FEE2E2',
@@ -333,7 +526,7 @@ const styles = {
   form: {
     display: 'flex',
     flexDirection: 'column' as const,
-    gap: '1.5rem',
+    gap: '1.25rem',
   },
   formGroup: {
     display: 'flex',
@@ -341,17 +534,18 @@ const styles = {
     gap: '0.5rem',
   },
   label: {
-    fontSize: '0.9rem',
+    fontSize: '0.875rem',
     fontWeight: '600',
     color: '#374151',
+    marginBottom: '0.5rem',
   },
   input: {
     padding: '0.875rem 1rem',
     border: '2px solid #E5E7EB',
     borderRadius: '10px',
     fontSize: '1rem',
-    backgroundColor: '#FFFFFF',
-    transition: 'all 0.3s',
+    backgroundColor: '#F9FAFB',
+    transition: 'all 0.2s ease',
     outline: 'none',
   },
   button: {
@@ -361,29 +555,31 @@ const styles = {
     border: 'none',
     borderRadius: '10px',
     fontSize: '1rem',
-    fontWeight: '600',
+    fontWeight: '700',
     cursor: 'pointer',
     marginTop: '0.5rem',
-    transition: 'all 0.3s',
-    boxShadow: '0 4px 20px rgba(108, 92, 231, 0.3)',
+    transition: 'all 0.3s ease',
+    boxShadow: '0 4px 12px rgba(108, 92, 231, 0.3)',
   },
   divider: {
     position: 'relative' as const,
     textAlign: 'center' as const,
-    margin: '2rem 0',
+    margin: '1.5rem 0',
+    borderTop: '1px solid #E5E7EB',
   },
   dividerText: {
     backgroundColor: '#FFFFFF',
-    padding: '0 1rem',
+    padding: '0 0.75rem',
     color: '#9CA3AF',
-    fontSize: '0.9rem',
+    fontSize: '0.875rem',
     position: 'relative' as const,
-    zIndex: 1,
+    top: '-0.625rem',
+    display: 'inline-block',
   },
   footer: {
     textAlign: 'center' as const,
     color: '#6B7280',
-    fontSize: '0.95rem',
+    fontSize: '0.875rem',
   },
   link: {
     color: '#6C5CE7',

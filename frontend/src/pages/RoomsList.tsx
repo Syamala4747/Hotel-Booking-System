@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getRooms } from '../api/roomsApi';
 import Chatbot from '../components/Chatbot';
+import '../styles/filter-styles.css';
 
 // Add CSS animations
 const styleSheet = document.createElement("style");
@@ -103,8 +104,13 @@ document.head.appendChild(styleSheet);
 
 const RoomsList = () => {
   const [rooms, setRooms] = useState<any[]>([]);
+  const [filteredRooms, setFilteredRooms] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  // Search and filter states
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [sortOrder, setSortOrder] = useState<string>('default');
 
   useEffect(() => {
     loadRooms();
@@ -114,14 +120,14 @@ const RoomsList = () => {
     try {
       const data = await getRooms();
       console.log('🏨 RAW DATA from API:', JSON.stringify(data, null, 2));
-      
+
       // Ensure images is always an array
       const processedRooms = data.map((room: any) => {
         console.log(`\n📋 Processing Room ${room.room_number}:`);
         console.log('  - Raw images:', room.images);
         console.log('  - Type:', typeof room.images);
         console.log('  - Is Array:', Array.isArray(room.images));
-        
+
         let processedImages;
         if (Array.isArray(room.images)) {
           processedImages = room.images;
@@ -133,21 +139,51 @@ const RoomsList = () => {
           processedImages = [];
           console.log('  ❌ No images, using empty array');
         }
-        
+
         return {
           ...room,
           images: processedImages
         };
       });
-      
+
       console.log('\n✅ FINAL PROCESSED ROOMS:', JSON.stringify(processedRooms, null, 2));
       setRooms(processedRooms);
+      setFilteredRooms(processedRooms);
     } catch (error) {
       console.error('❌ Failed to load rooms:', error);
     } finally {
       setLoading(false);
     }
   };
+
+  // Filter rooms based on selected criteria
+  useEffect(() => {
+    let filtered = [...rooms];
+
+    // Filter by search query
+    if (searchQuery.trim() !== '') {
+      filtered = filtered.filter(room => {
+        const query = searchQuery.toLowerCase();
+        const roomNumber = room.room_number.toLowerCase();
+        const description = room.description.toLowerCase();
+        const types = Array.isArray(room.room_type) ? room.room_type : [room.room_type];
+        const typeString = types.join(' ').toLowerCase();
+
+        return roomNumber.includes(query) ||
+          description.includes(query) ||
+          typeString.includes(query);
+      });
+    }
+
+    // Sort by price
+    if (sortOrder === 'low-to-high') {
+      filtered.sort((a, b) => a.cost - b.cost);
+    } else if (sortOrder === 'high-to-low') {
+      filtered.sort((a, b) => b.cost - a.cost);
+    }
+
+    setFilteredRooms(filtered);
+  }, [searchQuery, sortOrder, rooms]);
 
   if (loading) {
     return (
@@ -175,8 +211,8 @@ const RoomsList = () => {
           </p>
           <div style={styles.heroStats}>
             <div style={styles.statItem}>
-              <div style={styles.statNumber}>{rooms.length}+</div>
-              <div style={styles.statLabel}>Premium Rooms</div>
+              <div style={styles.statNumber}>{filteredRooms.length}+</div>
+              <div style={styles.statLabel}>Available Rooms</div>
             </div>
             <div style={styles.statDivider}></div>
             <div style={styles.statItem}>
@@ -198,97 +234,149 @@ const RoomsList = () => {
           <div style={styles.sectionHeader}>
             <h2 style={styles.sectionTitle}>Available Rooms</h2>
             <p style={styles.sectionDesc}>Choose from our handpicked selection of premium rooms</p>
-          </div>
 
-          <div style={styles.grid} className="dashboard-rooms-grid">
-            {rooms.map((room) => (
-              <div 
-                key={room.id} 
-                style={styles.card}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-12px)';
-                  e.currentTarget.style.boxShadow = '0 25px 50px rgba(108, 92, 231, 0.15)';
-                  const img = e.currentTarget.querySelector('img');
-                  if (img) img.style.transform = 'scale(1.1)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 2px 15px rgba(0,0,0,0.06)';
-                  const img = e.currentTarget.querySelector('img');
-                  if (img) img.style.transform = 'scale(1)';
-                }}
-              >
-                <div style={styles.imageContainer}>
-                  {room.images && room.images.length > 0 ? (
-                    <img 
-                      src={room.images[0]} 
-                      alt={room.room_number} 
-                      style={styles.image}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  ) : (
-                    <div style={styles.noImage}>No Image</div>
-                  )}
-                  <div style={styles.roomBadge}>{room.capacity} 👥</div>
-                  {room.images && room.images.length > 1 && (
-                    <div style={styles.imageCount}>📷 {room.images.length}</div>
-                  )}
-                </div>
-                
-                <div style={styles.cardBody}>
-                  <div style={styles.cardHeader}>
-                    <h3 style={styles.roomNumber}>Room {room.room_number}</h3>
-                    <div style={styles.priceTag}>
-                      <span style={styles.priceAmount}>₹{room.cost}</span>
-                      <span style={styles.priceLabel}>/day</span>
-                    </div>
-                  </div>
-                  
-                  <div style={styles.roomTypes}>
-                    {(Array.isArray(room.room_type) ? room.room_type : [room.room_type]).map((type: string, idx: number) => (
-                      <span key={idx} style={styles.typeTag}>{type.replace('_', ' ')}</span>
-                    ))}
-                  </div>
-                  
-                  <p style={styles.description}>{room.description.substring(0, 100)}...</p>
-                  
-                  <div style={styles.buttonGroup}>
-                    <button
-                      onClick={() => navigate(`/rooms/${room.id}?mode=view`)}
-                      style={styles.viewButton}
-                      onMouseOver={(e) => {
-                        e.currentTarget.style.backgroundColor = '#FFFFFF';
-                        e.currentTarget.style.borderColor = '#667EEA';
-                        e.currentTarget.style.color = '#667EEA';
-                      }}
-                      onMouseOut={(e) => {
-                        e.currentTarget.style.backgroundColor = '#F9FAFB';
-                        e.currentTarget.style.borderColor = '#E5E7EB';
-                        e.currentTarget.style.color = '#374151';
-                      }}
-                    >
-                      View Details
-                    </button>
-                    <button
-                      onClick={() => navigate(`/rooms/${room.id}?mode=book`)}
-                      style={styles.bookButton}
-                      onMouseOver={(e) => {
-                        e.currentTarget.style.transform = 'translateY(-3px)';
-                        e.currentTarget.style.boxShadow = '0 8px 30px rgba(102, 126, 234, 0.5)';
-                      }}
-                      onMouseOut={(e) => {
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = '0 4px 20px rgba(102, 126, 234, 0.4)';
-                      }}
-                    >
-                      Book Now →
-                    </button>
-                  </div>
+            {/* Search Bar */}
+            <div style={styles.searchContainer}>
+              <div style={styles.searchWrapper}>
+                <span style={styles.searchIcon}>🔍</span>
+                <input
+                  type="text"
+                  placeholder="Search by room number, type, or description..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  style={styles.searchInput}
+                  className="search-input"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    style={styles.clearButton}
+                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#FEE2E2'}
+                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+
+              {/* Sort Filter */}
+              <div style={styles.sortFilterContainer}>
+                <div style={styles.sortFilterWrapper}>
+                  <label style={styles.sortLabel}>
+                    <span style={styles.sortLabelText}>Sort by Price:</span>
+                  </label>
+                  <select
+                    value={sortOrder}
+                    onChange={(e) => setSortOrder(e.target.value)}
+                    style={styles.sortSelect}
+                    className="sort-select"
+                  >
+                    <option value="default">Default</option>
+                    <option value="low-to-high">Low to High</option>
+                    <option value="high-to-low">High to Low</option>
+                  </select>
                 </div>
               </div>
-            ))}
+            </div>
           </div>
+
+          {filteredRooms.length === 0 ? (
+            <div style={styles.noResults}>
+              <div style={styles.noResultsIcon}>🔍</div>
+              <h3 style={styles.noResultsTitle}>No rooms found</h3>
+              <p style={styles.noResultsText}>Try a different search term</p>
+            </div>
+          ) : (
+            <div style={styles.grid} className="dashboard-rooms-grid">
+              {filteredRooms.map((room) => (
+                <div
+                  key={room.id}
+                  style={styles.card}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-12px)';
+                    e.currentTarget.style.boxShadow = '0 25px 50px rgba(108, 92, 231, 0.15)';
+                    const img = e.currentTarget.querySelector('img');
+                    if (img) img.style.transform = 'scale(1.1)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 2px 15px rgba(0,0,0,0.06)';
+                    const img = e.currentTarget.querySelector('img');
+                    if (img) img.style.transform = 'scale(1)';
+                  }}
+                >
+                  <div style={styles.imageContainer}>
+                    {room.images && room.images.length > 0 ? (
+                      <img
+                        src={room.images[0]}
+                        alt={room.room_number}
+                        style={styles.image}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : (
+                      <div style={styles.noImage}>No Image</div>
+                    )}
+                    <div style={styles.roomBadge}>{room.capacity} 👥</div>
+                    {room.images && room.images.length > 1 && (
+                      <div style={styles.imageCount}>📷 {room.images.length}</div>
+                    )}
+                  </div>
+
+                  <div style={styles.cardBody}>
+                    <div style={styles.cardHeader}>
+                      <h3 style={styles.roomNumber}>Room {room.room_number}</h3>
+                      <div style={styles.priceTag}>
+                        <span style={styles.priceAmount}>₹{room.cost}</span>
+                        <span style={styles.priceLabel}>/day</span>
+                      </div>
+                    </div>
+
+                    <div style={styles.roomTypes}>
+                      {(Array.isArray(room.room_type) ? room.room_type : [room.room_type]).map((type: string, idx: number) => (
+                        <span key={idx} style={styles.typeTag}>{type.replace('_', ' ')}</span>
+                      ))}
+                    </div>
+
+                    <p style={styles.description}>{room.description.substring(0, 100)}...</p>
+
+                    <div style={styles.buttonGroup}>
+                      <button
+                        onClick={() => navigate(`/rooms/${room.id}?mode=view`)}
+                        style={styles.viewButton}
+                        onMouseOver={(e) => {
+                          e.currentTarget.style.backgroundColor = '#FFFFFF';
+                          e.currentTarget.style.borderColor = '#667EEA';
+                          e.currentTarget.style.color = '#667EEA';
+                        }}
+                        onMouseOut={(e) => {
+                          e.currentTarget.style.backgroundColor = '#F9FAFB';
+                          e.currentTarget.style.borderColor = '#E5E7EB';
+                          e.currentTarget.style.color = '#374151';
+                        }}
+                      >
+                        View Details
+                      </button>
+                      <button
+                        onClick={() => navigate(`/rooms/${room.id}?mode=book`)}
+                        style={styles.bookButton}
+                        onMouseOver={(e) => {
+                          e.currentTarget.style.transform = 'translateY(-3px)';
+                          e.currentTarget.style.boxShadow = '0 8px 30px rgba(102, 126, 234, 0.5)';
+                        }}
+                        onMouseOut={(e) => {
+                          e.currentTarget.style.transform = 'translateY(0)';
+                          e.currentTarget.style.boxShadow = '0 4px 20px rgba(102, 126, 234, 0.4)';
+                        }}
+                      >
+                        Book Now →
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -423,7 +511,7 @@ const styles = {
   },
   sectionHeader: {
     textAlign: 'center' as const,
-    marginBottom: '3.5rem',
+    marginBottom: '3rem',
   },
   sectionTitle: {
     fontSize: window.innerWidth <= 768 ? '1.75rem' : '2.75rem',
@@ -434,8 +522,116 @@ const styles = {
   sectionDesc: {
     fontSize: '1.1rem',
     color: '#6B7280',
+    marginBottom: '2rem',
+  },
+  searchContainer: {
+    marginTop: '2rem',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '2rem',
+    alignItems: 'center',
+  },
+  searchWrapper: {
+    position: 'relative' as const,
+    maxWidth: '600px',
+    width: '100%',
+    margin: '0 auto',
+  },
+  searchIcon: {
+    position: 'absolute' as const,
+    left: '1.25rem',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    fontSize: '1.25rem',
+    pointerEvents: 'none' as const,
+  },
+  searchInput: {
+    width: '100%',
+    padding: '1rem 3.5rem 1rem 3.5rem',
+    border: '2px solid #E5E7EB',
+    borderRadius: '50px',
+    fontSize: '1rem',
+    backgroundColor: 'white',
+    color: '#1F2937',
+    transition: 'all 0.3s',
+    outline: 'none',
+    boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
+  },
+  clearButton: {
+    position: 'absolute' as const,
+    right: '1rem',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    width: '32px',
+    height: '32px',
+    border: 'none',
+    borderRadius: '50%',
+    backgroundColor: 'transparent',
+    color: '#DC2626',
+    fontSize: '1.25rem',
+    cursor: 'pointer',
+    transition: 'all 0.3s',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontWeight: '700',
+  },
+  sortFilterContainer: {
+    width: '100%',
     maxWidth: '600px',
     margin: '0 auto',
+  },
+  sortFilterWrapper: {
+    backgroundColor: '#F9FAFB',
+    padding: window.innerWidth <= 768 ? '1.5rem' : '2rem',
+    borderRadius: '16px',
+    border: '2px solid #E5E7EB',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '1rem',
+  },
+  sortLabel: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  sortLabelText: {
+    fontSize: '1rem',
+    fontWeight: '600',
+    color: '#374151',
+  },
+  sortSelect: {
+    width: '100%',
+    padding: '0.875rem 1rem',
+    border: '2px solid #E5E7EB',
+    borderRadius: '12px',
+    fontSize: '1rem',
+    backgroundColor: 'white',
+    color: '#1F2937',
+    cursor: 'pointer',
+    transition: 'all 0.3s',
+    outline: 'none',
+    fontWeight: '600',
+  },
+  noResults: {
+    textAlign: 'center' as const,
+    padding: '4rem 2rem',
+    backgroundColor: '#F9FAFB',
+    borderRadius: '16px',
+    border: '2px dashed #E5E7EB',
+  },
+  noResultsIcon: {
+    fontSize: '4rem',
+    marginBottom: '1rem',
+  },
+  noResultsTitle: {
+    fontSize: '1.75rem',
+    fontWeight: '700',
+    color: '#1F2937',
+    marginBottom: '0.5rem',
+  },
+  noResultsText: {
+    fontSize: '1.1rem',
+    color: '#6B7280',
   },
   grid: {
     display: 'grid',
