@@ -739,41 +739,24 @@ const AdminRooms = () => {
                                 alignItems: 'center',
                                 gap: '0.5rem',
                               }}>
-                                🎯 Add-ons & Customizations
+                                📝 Special Requests
                               </div>
-                              {booking.customizations && Object.entries(booking.customizations).filter(([_, selected]) => selected).length > 0 ? (
-                                <div style={{
-                                  display: 'flex',
-                                  flexWrap: 'wrap',
-                                  gap: '0.5rem',
-                                }}>
-                                  {Object.entries(booking.customizations)
-                                    .filter(([_, selected]) => selected)
-                                    .map(([key, _]) => (
-                                      <span key={key} style={{
-                                        padding: '0.5rem 0.75rem',
-                                        backgroundColor: '#EEF2FF',
-                                        color: '#6366F1',
-                                        borderRadius: '16px',
-                                        fontSize: '0.85rem',
-                                        fontWeight: '600',
-                                        border: '1px solid #C7D2FE',
-                                      }}>
-                                        {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}
-                                      </span>
-                                    ))}
-                                </div>
-                              ) : (
-                                <div style={{
-                                  fontSize: '0.9rem',
-                                  color: '#6B7280',
-                                  fontStyle: 'italic',
-                                  textAlign: 'center',
-                                  padding: '0.5rem',
-                                }}>
-                                  No add-ons selected
-                                </div>
-                              )}
+                              <div style={{
+                                fontSize: '0.85rem',
+                                color: '#4F46E5',
+                                lineHeight: '1.5',
+                                whiteSpace: 'pre-wrap' as const,
+                                wordBreak: 'break-word' as const,
+                                fontWeight: '500',
+                                padding: '0.5rem',
+                                backgroundColor: '#EEF2FF',
+                                borderRadius: '8px',
+                                border: '1px solid #C7D2FE',
+                              }}>
+                                {booking.customizations && (booking.customizations as any).specialRequests 
+                                  ? (booking.customizations as any).specialRequests 
+                                  : 'None'}
+                              </div>
                             </div>
                           </div>
                         );

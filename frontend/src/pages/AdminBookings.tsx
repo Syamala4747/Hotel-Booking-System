@@ -380,16 +380,9 @@ const AdminBookings = () => {
                             </td>
                             <td style={styles.td}>
                               <div style={styles.customizationsCell}>
-                                {booking.customizations && Object.entries(booking.customizations)
-                                  .filter(([_, selected]) => selected)
-                                  .map(([key, _]) => (
-                                    <span key={key} style={styles.customizationTag}>
-                                      {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}
-                                    </span>
-                                  ))}
-                                {(!booking.customizations || Object.values(booking.customizations).every(v => !v)) && (
-                                  <span style={styles.noCustomizations}>None</span>
-                                )}
+                                {booking.customizations && (booking.customizations as any).specialRequests 
+                                  ? (booking.customizations as any).specialRequests 
+                                  : 'None'}
                               </div>
                             </td>
                             <td style={styles.td}>
@@ -607,23 +600,13 @@ const AdminBookings = () => {
                         {/* Add-ons Section */}
                         <div style={styles.mobileAddonsSection}>
                           <div style={styles.mobileSectionTitle}>
-                            🎯 Add-ons & Customizations
+                            📝 Special Requests
                           </div>
-                          {booking.customizations && Object.entries(booking.customizations).filter(([_, selected]) => selected).length > 0 ? (
-                            <div style={styles.mobileAddonsList}>
-                              {Object.entries(booking.customizations)
-                                .filter(([_, selected]) => selected)
-                                .map(([key, _]) => (
-                                  <span key={key} style={styles.mobileAddonTag}>
-                                    {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}
-                                  </span>
-                                ))}
-                            </div>
-                          ) : (
-                            <div style={styles.mobileNoAddons}>
-                              No add-ons selected
-                            </div>
-                          )}
+                          <div style={styles.mobileSpecialRequests}>
+                            {booking.customizations && (booking.customizations as any).specialRequests 
+                              ? (booking.customizations as any).specialRequests 
+                              : 'None'}
+                          </div>
                         </div>
 
                         {/* Status Management */}
@@ -1299,6 +1282,14 @@ const styles = {
     fontSize: '0.85rem',
     fontWeight: '600',
     border: '1px solid #C7D2FE',
+  },
+  mobileSpecialRequests: {
+    fontSize: '0.9rem',
+    color: '#4F46E5',
+    lineHeight: '1.5',
+    whiteSpace: 'pre-wrap' as const,
+    wordBreak: 'break-word' as const,
+    fontWeight: '500',
   },
   mobileNoAddons: {
     fontSize: '0.9rem',

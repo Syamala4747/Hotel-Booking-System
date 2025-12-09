@@ -263,21 +263,15 @@ const MyBookings = () => {
                     </p>
                   </div>
 
-                  {/* Add-ons */}
-                  {booking.customizations && Object.entries(booking.customizations).some(([_, selected]) => selected) && (
-                    <div style={styles.addOnsBox}>
-                      <p style={styles.addOnsTitle}>🎯 Add-ons:</p>
-                      <div style={styles.addOnsList}>
-                        {Object.entries(booking.customizations)
-                          .filter(([_, selected]) => selected)
-                          .map(([key, _]) => (
-                            <span key={key} style={styles.addOnTag}>
-                              {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}
-                            </span>
-                          ))}
-                      </div>
-                    </div>
-                  )}
+                  {/* Special Requests */}
+                  <div style={styles.addOnsBox}>
+                    <p style={styles.addOnsTitle}>📝 Special Requests:</p>
+                    <p style={styles.specialRequestsText}>
+                      {booking.customizations && (booking.customizations as any).specialRequests 
+                        ? (booking.customizations as any).specialRequests 
+                        : 'None'}
+                    </p>
+                  </div>
 
                   {/* Feedback */}
                   {isBookingCompleted(booking) && (() => {
@@ -508,6 +502,8 @@ const styles = {
   },
   info: {
     flex: 1,
+    width: '100%',
+    boxSizing: 'border-box' as const,
   },
   top: {
     display: 'flex',
@@ -538,6 +534,8 @@ const styles = {
     padding: '0.75rem',
     borderRadius: '6px',
     marginTop: '0.5rem',
+    width: '100%',
+    boxSizing: 'border-box' as const,
   },
   costLine: {
     fontSize: isMobile ? '1rem' : '0.9rem',
@@ -552,15 +550,29 @@ const styles = {
   },
   addOnsBox: {
     backgroundColor: '#EEF2FF',
-    padding: '0.75rem',
-    borderRadius: '6px',
-    marginTop: '0.5rem',
+    padding: isMobile ? '0.875rem' : '0.75rem',
+    borderRadius: isMobile ? '10px' : '8px',
+    marginTop: isMobile ? '0.625rem' : '0.75rem',
+    border: '1px solid #C7D2FE',
+    width: '100%',
+    boxSizing: 'border-box' as const,
   },
   addOnsTitle: {
-    fontSize: '0.9rem',
+    fontSize: isMobile ? '0.95rem' : '0.9rem',
     fontWeight: '600',
     color: '#4F46E5',
-    margin: '0 0 0.5rem 0',
+    margin: '0 0 0.375rem 0',
+  },
+  specialRequestsText: {
+    fontSize: isMobile ? '0.9rem' : '0.85rem',
+    color: '#4F46E5',
+    lineHeight: '1.4',
+    margin: 0,
+    whiteSpace: 'pre-wrap' as const,
+    wordBreak: 'break-word' as const,
+    fontWeight: '500',
+    width: '100%',
+    display: 'block',
   },
   addOnsList: {
     display: 'flex',

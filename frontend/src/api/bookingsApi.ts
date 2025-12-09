@@ -6,11 +6,7 @@ export interface CreateBookingData {
   endTime: string;
   phoneNumber: string;
   customizations?: {
-    extraBed?: boolean;
-    breakfast?: boolean;
-    airportPickup?: boolean;
-    lateCheckout?: boolean;
-    roomDecoration?: boolean;
+    specialRequests?: string;
   };
 }
 

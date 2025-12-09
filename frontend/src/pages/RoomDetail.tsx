@@ -14,28 +14,10 @@ const RoomDetail = () => {
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [specialRequests, setSpecialRequests] = useState('');
   const [error, setError] = useState('');
-  
-  // Customization options
-  const [customizations, setCustomizations] = useState({
-    extraBed: false,
-    breakfast: false,
-    airportPickup: false,
-    lateCheckout: false,
-    roomDecoration: false,
-  });
 
-  // Force re-render when customizations change
-  const [, forceUpdate] = useState({});
   const [currentTotal, setCurrentTotal] = useState(0);
-
-  const customizationPrices = {
-    extraBed: 500,
-    breakfast: 300,
-    airportPickup: 800,
-    lateCheckout: 200,
-    roomDecoration: 1000,
-  };
   const [loading, setLoading] = useState(true);
 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -49,11 +31,10 @@ const RoomDetail = () => {
     loadRoomData();
   }, [id]);
 
-  // Force re-render when customizations change
+  // Force re-render when booking details change
   useEffect(() => {
-    forceUpdate({});
     setCurrentTotal(calculateTotal());
-  }, [customizations, startTime, endTime, room]);
+  }, [startTime, endTime, room]);
 
   const loadRoomData = async () => {
     try {
@@ -106,31 +87,8 @@ const RoomDetail = () => {
       basePrice = fullDays * costPerDay;
     }
 
-    // Calculate customization costs - ensure all are numbers
-    let customizationCost = 0;
-    if (customizations.extraBed) customizationCost += Number(customizationPrices.extraBed);
-    if (customizations.breakfast) customizationCost += Number(customizationPrices.breakfast);
-    if (customizations.airportPickup) customizationCost += Number(customizationPrices.airportPickup);
-    if (customizations.lateCheckout) customizationCost += Number(customizationPrices.lateCheckout);
-    if (customizations.roomDecoration) customizationCost += Number(customizationPrices.roomDecoration);
-
-    // Ensure final calculation is done with numbers
-    const finalTotal = Number(basePrice) + Number(customizationCost);
-    
-    // Debug logging
-    console.log('🔍 Calculate Total Debug:', {
-      basePrice: Number(basePrice),
-      basePriceType: typeof basePrice,
-      customizations,
-      customizationCost: Number(customizationCost),
-      customizationCostType: typeof customizationCost,
-      finalTotal: Number(finalTotal),
-      finalTotalType: typeof finalTotal,
-      startTime,
-      endTime,
-      roomCost: room?.cost,
-      roomCostType: typeof room?.cost
-    });
+    // No customization costs - they're paid at check-in
+    const finalTotal = Number(basePrice);
 
     return Number(finalTotal);
   };
@@ -220,7 +178,9 @@ const RoomDetail = () => {
         startTime,
         endTime,
         phoneNumber: phoneNumber,
-        customizations: customizations,
+        customizations: specialRequests.trim() ? {
+          specialRequests: specialRequests.trim()
+        } : undefined,
       });
 
       setShowSuccessModal(true);
@@ -367,103 +327,45 @@ const RoomDetail = () => {
               </div>
 
               {/* Customization Options */}
-              <div style={styles.customizationSection}>
-                <h4 style={styles.customizationTitle}>Optional Add-ons</h4>
-                <div style={styles.customizationGrid}>
-                  <label style={styles.customizationItem} className="customization-item">
-                    <input
-                      type="checkbox"
-                      checked={customizations.extraBed}
-                      onChange={(e) => setCustomizations(prev => ({...prev, extraBed: e.target.checked}))}
-                      style={styles.checkbox}
-                    />
-                    <div style={styles.customizationInfo}>
-                      <span style={styles.customizationName}>Extra Bed</span>
-                      <span style={styles.customizationPrice}>+₹{customizationPrices.extraBed}</span>
-                    </div>
-                  </label>
-
-                  <label style={styles.customizationItem} className="customization-item">
-                    <input
-                      type="checkbox"
-                      checked={customizations.breakfast}
-                      onChange={(e) => setCustomizations(prev => ({...prev, breakfast: e.target.checked}))}
-                      style={styles.checkbox}
-                    />
-                    <div style={styles.customizationInfo}>
-                      <span style={styles.customizationName}>Breakfast</span>
-                      <span style={styles.customizationPrice}>+₹{customizationPrices.breakfast}</span>
-                    </div>
-                  </label>
-
-                  <label style={styles.customizationItem} className="customization-item">
-                    <input
-                      type="checkbox"
-                      checked={customizations.airportPickup}
-                      onChange={(e) => setCustomizations(prev => ({...prev, airportPickup: e.target.checked}))}
-                      style={styles.checkbox}
-                    />
-                    <div style={styles.customizationInfo}>
-                      <span style={styles.customizationName}>Airport Pickup</span>
-                      <span style={styles.customizationPrice}>+₹{customizationPrices.airportPickup}</span>
-                    </div>
-                  </label>
-
-                  <label style={styles.customizationItem} className="customization-item">
-                    <input
-                      type="checkbox"
-                      checked={customizations.lateCheckout}
-                      onChange={(e) => setCustomizations(prev => ({...prev, lateCheckout: e.target.checked}))}
-                      style={styles.checkbox}
-                    />
-                    <div style={styles.customizationInfo}>
-                      <span style={styles.customizationName}>Late Checkout</span>
-                      <span style={styles.customizationPrice}>+₹{customizationPrices.lateCheckout}</span>
-                    </div>
-                  </label>
-
-                  <label style={styles.customizationItem} className="customization-item">
-                    <input
-                      type="checkbox"
-                      checked={customizations.roomDecoration}
-                      onChange={(e) => setCustomizations(prev => ({...prev, roomDecoration: e.target.checked}))}
-                      style={styles.checkbox}
-                    />
-                    <div style={styles.customizationInfo}>
-                      <span style={styles.customizationName}>Room Decoration</span>
-                      <span style={styles.customizationPrice}>+₹{customizationPrices.roomDecoration}</span>
-                    </div>
-                  </label>
+              {/* Special Requests & Customizations */}
+              <div style={styles.formGroup}>
+                <label style={styles.label}>Special Requests & Customizations (Optional)</label>
+                <textarea
+                  value={specialRequests}
+                  onChange={(e) => setSpecialRequests(e.target.value)}
+                  placeholder="Enter any special requests or add-ons you need (e.g., extra bed, breakfast, airport pickup, late checkout, room decoration, etc.)"
+                  style={styles.textarea}
+                  rows={4}
+                />
+                <div style={styles.customizationNotice}>
+                  <span style={styles.noticeIcon}>💡</span>
+                  <span style={styles.noticeText}>
+                    All special requests and add-on services will be arranged at the hotel based on availability.
+                    <strong> Extra charges will apply and will be collected at the time of check-in.</strong>
+                  </span>
                 </div>
               </div>
 
               {startTime && endTime && (
-                <div key={JSON.stringify(customizations)} style={styles.priceBreakdown}>
+                <div style={styles.priceBreakdown}>
                   <div style={styles.priceRow}>
                     <span>⏱️ Duration: {getDurationText()}</span>
                   </div>
                   <div style={styles.priceRow}>
                     <span>💵 Room Rate: ₹{Number(getBaseRoomCost()).toFixed(0)}</span>
                   </div>
-                  {Object.entries(customizations)
-                    .filter(([_, selected]) => selected)
-                    .map(([key, _]) => (
-                      <div key={key} style={styles.priceRow}>
-                        <span>🎯 {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}: ₹{customizationPrices[key as keyof typeof customizationPrices]}</span>
-                      </div>
-                    ))
-                  }
                   {calculateDuration().hours < 6 && (
                     <div style={styles.warningRow}>
                       <span>⚠️ Minimum 6 hours required</span>
                     </div>
                   )}
                   <div style={styles.totalRow}>
-                    <span style={styles.totalLabel}>Total Amount:</span>
+                    <span style={styles.totalLabel}>Room Booking Amount:</span>
                     <span style={styles.totalAmount}>
                       {currentTotal > 0 ? `₹${Number(currentTotal).toFixed(0)}` : 'Invalid duration'}
                     </span>
                   </div>
+
                 </div>
               )}
 
@@ -471,7 +373,8 @@ const RoomDetail = () => {
               <div style={styles.paymentInfo}>
                 <div style={styles.paymentIcon}>💵</div>
                 <div>
-                  <div style={styles.paymentDesc}>Pay ₹{Number(currentTotal).toFixed(0)} when you arrive at the hotel</div>
+                  <div style={styles.paymentDesc}>Pay ₹{Number(currentTotal).toFixed(0)} at the hotel during check-in</div>
+                  <div style={styles.paymentNote}>Additional charges for add-ons will be collected separately</div>
                 </div>
               </div>
 
@@ -739,6 +642,63 @@ const styles = {
     color: '#0284C7',
     fontWeight: '500',
   },
+  paymentNote: {
+    fontSize: '0.8rem',
+    color: '#0369A1',
+    marginTop: '0.25rem',
+    fontStyle: 'italic',
+  },
+  customizationNotice: {
+    display: 'flex',
+    gap: '0.5rem',
+    alignItems: 'flex-start',
+    marginTop: '0.75rem',
+    padding: '0.75rem',
+    backgroundColor: '#FEF3C7',
+    borderRadius: '8px',
+    border: '1px solid #FDE68A',
+  },
+  addOnNote: {
+    display: 'flex',
+    gap: '0.5rem',
+    alignItems: 'center',
+    marginTop: '0.75rem',
+    padding: '0.5rem',
+    backgroundColor: '#FEF3C7',
+    borderRadius: '6px',
+  },
+  addOnNoteText: {
+    fontSize: '0.85rem',
+    color: '#92400E',
+    fontWeight: '500',
+  },
+  textarea: {
+    padding: window.innerWidth <= 768 ? '1rem' : '0.75rem',
+    border: '1px solid #E5E7EB',
+    borderRadius: window.innerWidth <= 768 ? '12px' : '8px',
+    fontSize: window.innerWidth <= 768 ? '16px' : '1rem',
+    minHeight: window.innerWidth <= 768 ? '120px' : '100px',
+    resize: 'vertical' as const,
+    fontFamily: 'inherit',
+    lineHeight: '1.5',
+    width: '100%',
+    boxSizing: 'border-box' as const,
+  },
+  noticeIcon: {
+    fontSize: '1rem',
+    flexShrink: 0,
+    marginTop: '0.1rem',
+  },
+  noticeText: {
+    fontSize: '0.85rem',
+    color: '#92400E',
+    lineHeight: '1.4',
+    fontWeight: '500',
+  },
+  noteIcon: {
+    fontSize: '1rem',
+    flexShrink: 0,
+  },
   checkmark: {
     position: 'absolute' as const,
     top: '0.5rem',
@@ -954,7 +914,7 @@ if (typeof document !== 'undefined') {
       }
     }
   `;
-  
+
   if (!document.head.querySelector('#room-detail-mobile-styles')) {
     mobileStyles.id = 'room-detail-mobile-styles';
     document.head.appendChild(mobileStyles);
