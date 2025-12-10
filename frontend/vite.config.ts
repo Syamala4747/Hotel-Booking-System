@@ -18,8 +18,8 @@ export default defineConfig({
         },
       },
     },
-    // Enable minification with terser
-    minify: 'terser',
+    // Enable minification with esbuild (default, no extra deps needed)
+    minify: 'esbuild',
     // Reduce chunk size warnings threshold
     chunkSizeWarningLimit: 1000,
   },
