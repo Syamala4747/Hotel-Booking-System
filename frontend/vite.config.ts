@@ -6,4 +6,25 @@ export default defineConfig({
   server: {
     port: 5173,
   },
+  build: {
+    // Optimize bundle size
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Split vendor libraries into separate chunks
+          vendor: ['react', 'react-dom'],
+          router: ['react-router-dom'],
+          api: ['axios'],
+        },
+      },
+    },
+    // Enable minification
+    minify: 'terser',
+    // Reduce chunk size warnings threshold
+    chunkSizeWarningLimit: 1000,
+  },
+  // Optimize dependencies
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom', 'axios'],
+  },
 });
