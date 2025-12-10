@@ -18,7 +18,7 @@ export default defineConfig({
         },
       },
     },
-    // Enable minification
+    // Enable minification with terser
     minify: 'terser',
     // Reduce chunk size warnings threshold
     chunkSizeWarningLimit: 1000,
